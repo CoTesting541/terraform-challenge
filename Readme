@@ -1,0 +1,108 @@
+# Serverless Website Visitor Counter on AWS
+
+Terraform IaC → AWS S3 Static Website → CloudFront CDN → API Gateway → Lambda → DynamoDB
+
+## Overview
+
+This project is the known terraform challenge where you host your own CV on a S3 bucket using cloudfront. A visitor counter is added using AWS lambda and AWS dynamodb table to store the count.
+
+This project was done using modules vand native resourcecs.
+
+## Architecture 
+
+┌─────────────────────────────────────────────────────────────────┐
+│                         User Browser                            │
+│                                                                 │
+│  1. Requests Static Website (HTML/CSS/JS)                      │
+│  2. JavaScript calls API to get/update visitor count           │
+└───────────────────────┬───────────────────────┬─────────────────┘
+                        │                       │
+                        ▼                       ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                          AWS Cloud                              │
+│                                                                 │
+│  ┌────────────────────────┐    ┌───────────────────────────┐    │
+│  │ Amazon CloudFront      │    │ Amazon API Gateway        │    │
+│  │ (Global CDN)           │    │ (REST API Endpoint)       │    │
+│  │                        │    │                           │    │
+│  │ Caches static assets   │    │ Triggers Lambda Function  │    │
+│  │ at edge locations      │    │ Handles CORS requests     │    │
+│  └────────────┬───────────┘    └─────────────┬─────────────┘    │
+│               │                              │                  │
+│               ▼                              ▼                  │
+│  ┌────────────────────────┐    ┌───────────────────────────┐    │
+│  │ Amazon S3              │    │ AWS Lambda (Python 3.x)   │    │
+│  │ Static Website Hosting │    │                           │    │
+│  │                        │    │ Atomic increment logic    │    │
+│  │ Hosts frontend assets  │    │ Returns updated count     │    │
+│  └────────────────────────┘    └─────────────┬─────────────┘    │
+│                                               │                  │
+│                                               ▼                  │
+│                                  ┌───────────────────────────┐   │
+│                                  │ Amazon DynamoDB           │   │
+│                                  │ (NoSQL Database)          │   │
+│                                  │                           │   │
+│                                  │ Stores visitor count      │   │
+│                                  │ Infinite scalability      │   │
+│                                  └───────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+
+
+## Tech stack:
+S3 bucket
+CloudFront distribution
+API Gateway
+Lambda function
+DynamoDB table
+IAM roles and permissions
+
+
+cd terraform
+terraform init
+terraform plan
+terraform apply
+
+Open the CloudFront Distribution URL in your browser.
+
+The visitor count should automatically increment on page load.
+
+Request Flow
+┌───────────────┐
+│ User Opens    │
+│ Website       │
+└───────┬───────┘
+        │
+        ▼
+┌───────────────┐
+│ CloudFront    │
+│ Serves Static │
+│ Files         │
+└───────┬───────┘
+        │
+        ▼
+┌───────────────┐
+│ JavaScript    │
+│ Calls API     │
+│ Gateway       │
+└───────┬───────┘
+        │
+        ▼
+┌───────────────┐
+│ Lambda        │
+│ Executes      │
+│ Counter Logic │
+└───────┬───────┘
+        │
+        ▼
+┌───────────────┐
+│ DynamoDB      │
+│ Atomic Count  │
+│ Increment     │
+└───────┬───────┘
+        │
+        ▼
+┌───────────────┐
+│ Updated Count │
+│ Returned to   │
+│ Browser        │
+└───────────────┘

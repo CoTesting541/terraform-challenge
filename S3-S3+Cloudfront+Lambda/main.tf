@@ -57,22 +57,6 @@ data "aws_iam_policy_document" "s3_policy" {
   }
 }
 
-# resource "aws_s3_bucket_policy" "main" {
-#   bucket = aws_s3_bucket.main.id
-
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Effect    = "Allow"
-#         Principal = "*"
-#         Action    = "s3:GetObject"
-#         Resource  = "${aws_s3_bucket.main.arn}/*"
-#       }
-#     ]
-#   })
-# }
-
 resource "aws_s3_bucket_policy" "s3_policy" {
   bucket = aws_s3_bucket.main.id
   policy = data.aws_iam_policy_document.s3_policy.json
