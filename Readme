@@ -6,7 +6,6 @@ Terraform IaC → AWS S3 Static Website → CloudFront CDN → API Gateway → L
 
 This project is the known terraform challenge where you host your own CV on a S3 bucket using cloudfront. A visitor counter is added using AWS lambda and AWS dynamodb table to store the count.
 
-This project was done using modules vand native resourcecs.
 
 ## Architecture 
 
